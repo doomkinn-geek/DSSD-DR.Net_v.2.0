@@ -1,0 +1,10 @@
+﻿<Window x:Class="XRayApp.UI.ImageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Image Window" Height="450" Width="800">
+    <Grid>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Image x:Name="image" Stretch="None" />
+        </ScrollViewer>
+    </Grid>
+</Window>
