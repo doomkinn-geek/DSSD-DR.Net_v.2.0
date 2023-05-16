@@ -10,12 +10,12 @@ namespace XRayApp.Data.Models
     public class Image
     {
         public int Id { get; set; } // Primary Key
-        public string ImageId { get; set; } // Image ID
+        public string? ImageId { get; set; } // Image ID
         public DateTime ImageDate { get; set; } // Date of the image
-        public string ImagePath { get; set; } // Path where image file is stored
-        public string SeriesUID { get; set; } // DICOM Series UID
-        public string StudyUID { get; set; } // DICOM Study UID
-        public string ExposureParameters { get; set; } // Exposure parameters for X-ray image
+        public string? ImagePath { get; set; } // Path where image file is stored
+        public string? SeriesUID { get; set; } // DICOM Series UID
+        public string? StudyUID { get; set; } // DICOM Study UID
+        public string? ExposureParameters { get; set; } // Exposure parameters for X-ray image
 
         // Foreign Key for Study
         public int StudyId { get; set; } // Foreign key for Study

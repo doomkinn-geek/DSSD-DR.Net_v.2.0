@@ -35,7 +35,7 @@ namespace XRayApp.Data
 
             if (!Patients.Any() && !Studies.Any() && !Images.Any())
             {
-                Seed();
+                //Seed();
                 SaveChanges();
             }
         }

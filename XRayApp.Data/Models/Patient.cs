@@ -13,8 +13,8 @@ namespace XRayApp.Data.Models
         public string MiddleName { get; set; } // Middle Name of the patient
         public DateTime BirthDate { get; set; } // Date of Birth
         public string Gender { get; set; } // Gender of the patient
-        public string Address { get; set; } // Address of the patient
-        public string Comment { get; set; } // Additional comments
+        public string? Address { get; set; } // Address of the patient
+        public string? Comment { get; set; } // Additional comments
 
         // Navigation property
         public ICollection<Study> Studies { get; set; } // Collection of Studies related to the patient

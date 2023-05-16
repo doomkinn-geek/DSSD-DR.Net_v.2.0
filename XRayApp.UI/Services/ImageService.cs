@@ -23,6 +23,7 @@ namespace XRayApp.UI.Services
             var imageFolderPath = parameters.ImageFolderPath;
 
             var fullPath = Path.Combine(imageFolderPath, filePath);
+            fullPath += ".srf";
             if (string.IsNullOrWhiteSpace(fullPath))
             {
                 throw new ArgumentException("File path must not be empty", nameof(filePath));
