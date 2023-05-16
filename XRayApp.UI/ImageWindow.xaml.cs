@@ -22,6 +22,9 @@ namespace XRayApp.UI
         public ImageWindow()
         {
             InitializeComponent();
+            /*var app = (App)Application.Current;
+            var locator = (ViewModelLocator)app.Resources["Locator"];
+            DataContext = locator.ImageWindowViewModel;*/
         }
     }
 }

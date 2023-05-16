@@ -18,4 +18,10 @@
     </ApplicationDefinition>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="parameters.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

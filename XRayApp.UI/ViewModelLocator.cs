@@ -13,6 +13,7 @@ namespace XRayApp.UI
         public PatientViewModel PatientViewModel { get; private set; }
         public StudyViewModel StudyViewModel { get; private set; }
         public ImageViewModel ImageViewModel { get; private set; }
+        //public ImageWindowViewModel ImageWindowViewModel { get; private set; }
         public MainWindowViewModel MainWindowViewModel => new MainWindowViewModel(this);
 
         public ViewModelLocator(DatabaseManager databaseManager)
@@ -20,6 +21,7 @@ namespace XRayApp.UI
             PatientViewModel = new PatientViewModel(databaseManager);
             StudyViewModel = new StudyViewModel(databaseManager);
             ImageViewModel = new ImageViewModel(databaseManager, StudyViewModel);
+            //ImageWindowViewModel = new ImageWindowViewModel();
 
             PatientViewModel.SelectedPatientChanged += StudyViewModel.OnSelectedPatientChanged;
             StudyViewModel.SelectedStudyChanged += ImageViewModel.LoadImages;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,18 @@ namespace XRayApp.Core.File
 {
     public class SrfFileReader
     {
-        public SrfFileData ReadSrfFile(string filePath)
+        private string filePath;
+
+        public SrfFileReader()
+        {
+        }
+
+        public SrfFileReader(string filePath)
+        {
+            this.filePath = filePath;
+        }
+
+        public SrfFileData ReadSrfFile()
         {
             var srfData = new SrfFileData();
             using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
@@ -20,8 +32,15 @@ namespace XRayApp.Core.File
                 srfData.FrameHeight = binaryReader.ReadInt32();
                 srfData.Contrast = binaryReader.ReadInt32();
                 srfData.Brightness = binaryReader.ReadInt32();
-                srfData.IsNegative = binaryReader.ReadBoolean();
-                binaryReader.ReadBytes(3); // Skip 3 bytes as the Boolean took 4 bytes, but we only used 1
+
+                if (!(srfData.Contrast >= -8191 && srfData.Contrast <= 8191))
+                    srfData.Contrast = 0;
+
+                if (!(srfData.Brightness >= -8191 && srfData.Brightness <= 8191))
+                    srfData.Brightness = 0;
+
+                srfData.IsNegative = binaryReader.ReadByte() == 1;
+                //binaryReader.ReadBytes(3); // Skip 3 bytes as the Boolean took 4 bytes, but we only used 1
                 srfData.ContextVisionLUT = Encoding.ASCII.GetString(binaryReader.ReadBytes(4));
                 srfData.ContextVisionGOP = Encoding.ASCII.GetString(binaryReader.ReadBytes(4));
                 srfData.KalimatorLeft = binaryReader.ReadInt16();
@@ -37,10 +56,12 @@ namespace XRayApp.Core.File
                 srfData.MinimalAdjustmentLevel = binaryReader.ReadInt16();
                 srfData.OrientationString = Encoding.ASCII.GetString(binaryReader.ReadBytes(4));
 
-                srfData.PixelData = new List<ushort>();
-                while (binaryReader.BaseStream.Position != binaryReader.BaseStream.Length)
+                // Calculate the pixel data count based on the remaining bytes in the file
+                var pixelDataCount = (int)((binaryReader.BaseStream.Length - binaryReader.BaseStream.Position - 256) / sizeof(ushort));
+                srfData.PixelData = new ushort[pixelDataCount];
+                for (int i = 0; i < pixelDataCount; i++)
                 {
-                    srfData.PixelData.Add(binaryReader.ReadUInt16());
+                    srfData.PixelData[i] = binaryReader.ReadUInt16();
                 }
             }
             return srfData;

@@ -16,11 +16,13 @@ namespace XRayApp.UI.ViewModel
     {
         private readonly DatabaseManager _databaseService;
         private Image _selectedImage;
+        private RelayCommand _viewImageCommand;
 
         public ObservableCollection<Image> Images { get; private set; }
 
-        public RelayCommand DeleteCommand { get; private set; }        
-        public ICommand ViewImageCommand { get; private set; }
+        public RelayCommand DeleteCommand { get; private set; }
+        public RelayCommand ViewImageCommand => _viewImageCommand ??= new RelayCommand(ViewImage);
+
 
         public ImageViewModel(DatabaseManager databaseService, StudyViewModel studyViewModel)
         {
@@ -30,7 +32,7 @@ namespace XRayApp.UI.ViewModel
             studyViewModel.SelectedStudyChanged += LoadImages;
 
             DeleteCommand = new RelayCommand(DeleteImage, CanDeleteImage);            
-            ViewImageCommand = new RelayCommand(ViewImage);
+            //ViewImageCommand = new RelayCommand(ViewImage);
 
             //var images = databaseService.ImagesRepository.GetAll();
             //Images = new ObservableCollection<Image>(images);
@@ -62,9 +64,11 @@ namespace XRayApp.UI.ViewModel
             return SelectedImage != null;
         }
 
-        private void ViewImage()
+        private void ViewImage(object obj)
         {
             var window = new ImageWindow();
+            var viewModel = new ImageWindowViewModel(SelectedImage.ImagePath);
+            window.DataContext = viewModel;
             window.Show();
         }
 
