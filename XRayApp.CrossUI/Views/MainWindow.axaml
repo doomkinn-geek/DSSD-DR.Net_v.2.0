@@ -1,0 +1,14 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:local="clr-namespace:XRayApp.CrossUI"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="XRayApp.CrossUI.Views.MainWindow"
+		Title="XRay App" Width="1200" Height="450" WindowStartupLocation="CenterScreen">
+	<Grid ColumnDefinitions="*,400,400">
+		<local:PatientView DataContext="{Binding PatientViewModel}" Grid.Column="0" />
+		<local:StudyView DataContext="{Binding StudyViewModel}" Grid.Column="1" />
+		<local:ImageView DataContext="{Binding ImageViewModel}" Grid.Column="2" />
+	</Grid>
+</Window>

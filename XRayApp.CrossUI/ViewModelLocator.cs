@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XRayApp.CrossUI.ViewModels;
 using XRayApp.Data;
-using XRayApp.UI.ViewModel;
 
-namespace XRayApp.UI
+
+namespace XRayApp.CrossUI
 {
     public class ViewModelLocator
     {
         public PatientViewModel PatientViewModel { get; private set; }
         public StudyViewModel StudyViewModel { get; private set; }
-        public ImageViewModel ImageViewModel { get; private set; }
-        //public ImageWindowViewModel ImageWindowViewModel { get; private set; }
+        public ImageViewModel ImageViewModel { get; private set; }        
         public MainWindowViewModel MainWindowViewModel => new MainWindowViewModel(this);
 
         public ViewModelLocator()
@@ -33,8 +33,7 @@ namespace XRayApp.UI
         {
             PatientViewModel = new PatientViewModel(databaseManager);
             StudyViewModel = new StudyViewModel(databaseManager);
-            ImageViewModel = new ImageViewModel(databaseManager, StudyViewModel);
-            //ImageWindowViewModel = new ImageWindowViewModel();
+            ImageViewModel = new ImageViewModel(databaseManager, StudyViewModel);            
 
             PatientViewModel.SelectedPatientChanged += StudyViewModel.OnSelectedPatientChanged;
             StudyViewModel.SelectedStudyChanged += ImageViewModel.LoadImages;

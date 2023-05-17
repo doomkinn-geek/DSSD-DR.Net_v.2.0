@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:XRayApp.CrossUI"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="XRayApp.CrossUI.StudyView"
+             Background="#222">
+
+    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+        <TextBlock Text="Study ID:" Grid.Row="0" Grid.Column="0" Foreground="Silver"/>
+        <TextBox Text="{Binding SelectedStudy.StudyId}" Grid.Row="0" Grid.Column="1" Background="#555" Foreground="Silver"/>
+
+        <TextBlock Text="Study Date:" Grid.Row="1" Grid.Column="0" Foreground="Silver"/>
+        <DatePicker SelectedDate="{Binding SelectedStudy.StudyDate}" Grid.Row="1" Grid.Column="1" Background="#555" Foreground="Silver"/>
+
+        <TextBlock Text="Description:" Grid.Row="2" Grid.Column="0" Foreground="Silver"/>
+        <TextBox Text="{Binding SelectedStudy.Description}" Grid.Row="2" Grid.Column="1" Background="#555" Foreground="Silver"/>
+
+        <Button Content="Save Changes" Command="{Binding SaveChangesCommand}" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"/>
+
+        <ListBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Items="{Binding SelectedPatient.Studies}" SelectedItem="{Binding SelectedStudy}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding StudyDate, StringFormat='dd.MM.yyyy'}" Margin="5" Foreground="Silver"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:XRayApp.CrossUI"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="XRayApp.CrossUI.ImageView"
+             Background="#222">
+	<Grid ColumnDefinitions="*,*" RowDefinitions="*,Auto">
+		<ListBox x:Name="ImageList" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Items="{Binding Images}" SelectedItem="{Binding SelectedImage}" Background="#555" Foreground="Silver">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal">
+						<!--<Image Source="{Binding ImagePath}" Width="100" Height="100"/>-->
+						<TextBlock Text="{Binding ImagePath}" Margin="10,0,0,0" Foreground="Silver"/>
+						<TextBlock Text="{Binding ImageId}" Margin="10,0,0,0" Foreground="Silver"/>
+						<TextBlock Text="{Binding ImageDate, StringFormat='dd.MM.yyyy'}" Margin="10,0,0,0" Foreground="Silver"/>
+						<TextBlock Text="{Binding SeriesUID}" Margin="10,0,0,0" Foreground="Silver"/>
+						<TextBlock Text="{Binding StudyUID}" Margin="10,0,0,0" Foreground="Silver"/>
+						<TextBlock Text="{Binding ExposureParameters}" Margin="10,0,0,0" Foreground="Silver"/>
+					</StackPanel>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+		<Button Content="Delete Image" Command="{Binding DeleteCommand}" Grid.Row="1" Grid.Column="0" Background="#444" Foreground="White"/>
+		<Button Content="View Image" Command="{Binding ViewImageCommand}" Grid.Row="1" Grid.Column="1" Background="#444" Foreground="White"/>
+	</Grid>
+</UserControl>

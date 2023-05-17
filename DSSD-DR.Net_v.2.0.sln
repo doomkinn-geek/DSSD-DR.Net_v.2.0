@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XRayApp.Data", "XRayApp.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XRayApp.UI", "XRayApp.UI\XRayApp.UI.csproj", "{BD05D5BD-6B35-47BB-9CFC-25D75A21422F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentgenArmParser", "RentgenArmParser\RentgenArmParser.csproj", "{946EAECB-90AE-42B9-8B25-BB4AF9264665}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentgenArmParser", "RentgenArmParser\RentgenArmParser.csproj", "{946EAECB-90AE-42B9-8B25-BB4AF9264665}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XRayApp.CrossUI", "XRayApp.CrossUI\XRayApp.CrossUI.csproj", "{995E4D3E-31E5-4C49-BD1F-0115E54C4E66}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{946EAECB-90AE-42B9-8B25-BB4AF9264665}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{946EAECB-90AE-42B9-8B25-BB4AF9264665}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{946EAECB-90AE-42B9-8B25-BB4AF9264665}.Release|Any CPU.Build.0 = Release|Any CPU
+		{995E4D3E-31E5-4C49-BD1F-0115E54C4E66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{995E4D3E-31E5-4C49-BD1F-0115E54C4E66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{995E4D3E-31E5-4C49-BD1F-0115E54C4E66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{995E4D3E-31E5-4C49-BD1F-0115E54C4E66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
