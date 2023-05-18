@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="XRayApp.CrossUI.Views.MainWindow"
 		Title="XRay App" Width="1200" Height="450" WindowStartupLocation="CenterScreen">
-	<Grid ColumnDefinitions="*,400,400">
+	<Grid ColumnDefinitions="600,400,400*">
 		<local:PatientView DataContext="{Binding PatientViewModel}" Grid.Column="0" />
 		<local:StudyView DataContext="{Binding StudyViewModel}" Grid.Column="1" />
 		<local:ImageView DataContext="{Binding ImageViewModel}" Grid.Column="2" />

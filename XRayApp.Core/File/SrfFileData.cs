@@ -22,8 +22,8 @@ namespace XRayApp.Core.File
         public short KalimatorBottom { get; set; }
         public byte BitDepth { get; set; }
         public short PixelSize { get; set; }
-        public byte VerticalFlip { get; set; }
-        public byte HorizontalFlip { get; set; }
+        public bool VerticalFlip { get; set; }
+        public bool HorizontalFlip { get; set; }
         public short RotationDegree { get; set; }
         public int NormalizationIndex { get; set; }
         public short MinimalAdjustmentLevel { get; set; }

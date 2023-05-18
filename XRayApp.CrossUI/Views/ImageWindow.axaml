@@ -1,8 +1,33 @@
 <Window x:Class="XRayApp.CrossUI.ImageWindow"
         xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Image Window" Height="450" Width="800" WindowState="Maximized">
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <Image Source="{Binding ImageSource}" Stretch="None" />
-    </ScrollViewer>
+        Title="Image Window" Height="450" Width="800" WindowState="Maximized"
+		Background="#222">
+	<Grid Margin="10">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<StackPanel Orientation="Horizontal">
+			
+			<StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
+				<TextBlock Text="Яркость:" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="White" />
+				<TextBox Width="100" Text="{Binding Brightness}" />
+			</StackPanel>
+
+			<StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10">
+				<TextBlock Text="Контрастность:" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="White" />
+				<TextBox Width="100" Text="{Binding Contrast}" />
+			</StackPanel>
+			<Button Grid.Row="2" Content="Применять я-сть/к-сть" Command="{Binding ApplyChangesCommand}" Background="#444" Foreground="White" Margin="10" />
+			<CheckBox IsChecked="{Binding IsNegative, Mode=TwoWay}" Margin="10" Content="Негатив" Foreground="White" />
+			<Button Grid.Row="2" Content="Применить Sobel" Command="{Binding ApplySobelCommand}" Background="#444" Foreground="White" Margin="10" />
+		</StackPanel>
+
+		<ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+			<Image Source="{Binding ImageSource}" Stretch="None" />
+		</ScrollViewer>
+	</Grid>
 </Window>

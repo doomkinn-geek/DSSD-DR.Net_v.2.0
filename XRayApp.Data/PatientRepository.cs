@@ -46,7 +46,9 @@ namespace XRayApp.Data
         
         List<Patient> IPatientRepository.GetAll()
         {
-            return _databaseManager.Patients.ToList();
+            return _databaseManager.Patients
+                .OrderBy(p => p.LastName)
+                .ToList();
         }
     }
 }

@@ -1,52 +1,50 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="clr-namespace:XRayApp.CrossUI"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="XRayApp.CrossUI.PatientView"
-             Background="#222">
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+       xmlns:local="clr-namespace:XRayApp.CrossUI"
+       mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+       x:Class="XRayApp.CrossUI.PatientView"
+       Background="#222">
+	<Grid ColumnDefinitions="*,Auto" RowDefinitions="*,Auto">
+		<ListBox Grid.Column="0" Grid.Row="0" Items="{Binding Patients}" SelectedItem="{Binding SelectedPatient}"  Background="#555" Foreground="Silver">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal" Margin="5,0,0,0">
+						<TextBlock Text="{Binding LastName}" Margin="5,0,0,0" Foreground="White" />
+						<TextBlock Text="{Binding FirstName}" Margin="5,0,0,0" Foreground="White" />
+						<TextBlock Text="{Binding MiddleName}" Margin="5,0,0,0" Foreground="White" />
+						<TextBlock Text="{Binding BirthDate.Date, StringFormat='dd.MM.yyyy'}" Margin="5,0,0,0" Foreground="White" />
+					</StackPanel>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+		<StackPanel Grid.Column="1" Grid.Row="0">
+			<Button Content="Add Patient" Command="{Binding AddPatientCommand}" Margin="5" Background="#333" Foreground="White"/>
+			<Button Content="Edit Patient" Command="{Binding EditPatientCommand}" Margin="5" Background="#333" Foreground="White"/>
+			<Button Content="Delete Patient" Command="{Binding DeletePatientCommand}" Margin="5" Background="#333" Foreground="White"/>
+		</StackPanel>
 
-    <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,Auto">
-        <ListBox Grid.Column="0" Grid.Row="0" Items="{Binding Patients}" SelectedItem="{Binding SelectedPatient}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding LastName}" Margin="5" Foreground="Silver" />
-                        <TextBlock Text="{Binding FirstName}" Margin="5" Foreground="Silver" />
-                        <TextBlock Text="{Binding MiddleName}" Margin="5" Foreground="Silver" />
-                        <TextBlock Text="{Binding BirthDate, StringFormat='dd.MM.yyyy'}" Margin="5" Foreground="Silver" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+		<ListBox Grid.Column="0" Grid.Row="1" Items="{Binding SelectedPatient.Studies}" SelectedItem="{Binding SelectedStudy}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal" Background="#333" Margin="5">
+						<TextBlock Text="{Binding StudyDate, StringFormat='dd.MM.yyyy'}" Margin="5" Foreground="White" />
+						<TextBlock Text="{Binding Description}" Margin="5" Foreground="White" />
+					</StackPanel>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
 
-        <StackPanel Grid.Column="1" Grid.Row="0">
-            <Button Content="Add Patient" Command="{Binding AddPatientCommand}" />
-            <Button Content="Edit Patient" Command="{Binding EditPatientCommand}" />
-            <Button Content="Delete Patient" Command="{Binding DeletePatientCommand}" />
-        </StackPanel>
-
-        <ListBox Grid.Column="0" Grid.Row="1" Items="{Binding SelectedPatient.Studies}" SelectedItem="{Binding SelectedStudy}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding StudyDate, StringFormat='dd.MM.yyyy'}" Margin="5" Foreground="Silver" />
-                        <TextBlock Text="{Binding Description}" Margin="5" Foreground="Silver" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-
-        <ListBox Grid.Column="1" Grid.Row="1" Items="{Binding SelectedStudy.Images}" SelectedItem="{Binding SelectedImage}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding ImageDate, StringFormat='dd.MM.yyyy'}" Margin="5" Foreground="Silver" />
-                        <TextBlock Text="{Binding ImagePath}" Margin="5" Foreground="Silver" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </Grid>
+		<ListBox Grid.Column="1" Grid.Row="1" Items="{Binding SelectedStudy.Images}" SelectedItem="{Binding SelectedImage}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal" Background="#333" Margin="5">
+						<TextBlock Text="{Binding ImageDate, StringFormat='dd.MM.yyyy'}" Margin="5" Foreground="White" />
+						<TextBlock Text="{Binding ImagePath}" Margin="5" Foreground="White" />
+					</StackPanel>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Grid>
 </UserControl>

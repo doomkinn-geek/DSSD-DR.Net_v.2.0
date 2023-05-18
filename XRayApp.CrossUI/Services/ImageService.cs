@@ -1,8 +1,10 @@
 ﻿using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using SkiaSharp;
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using XRayApp.Core.File;
@@ -12,7 +14,7 @@ namespace XRayApp.CrossUI.Services
 {
     public class ImageService
     {
-        public Bitmap LoadImage(string filePath)
+        public SrfFileData LoadSrfData(string filePath)
         {
             var exeDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             var xmlFilePath = Path.Combine(exeDirectory, "parameters.xml");
@@ -33,28 +35,41 @@ namespace XRayApp.CrossUI.Services
             }
 
             // Load SRF file data
-            var reader = new SrfFileReader(fullPath);
-            var srfData = reader.ReadSrfFile();
-            //srfData.IsNegative = !srfData.IsNegative;
+            var reader = new SrfFileReader(fullPath);            
+            // Предполагая, что у вас есть метод для чтения данных из файла в формате SRF
+            SrfFileData srfData = reader.ReadSrfFile();
 
-            // Assuming srfFileData.PixelData is a one-dimensional array representing the image.
-            // Note that we'll need to apply brightness/contrast adjustments and convert ushort to byte.
-            var stride = srfData.FrameWidth * 2; // 2 bytes per pixel
+            // Применение функции HarmonizeImage к исходным данным
+            ushort[] harmonizedData = HarmonizeImage(srfData.PixelData);
 
-            ushort[] harmonizedData = HarmonizeImage(srfData.PixelData, srfData.Brightness, srfData.Contrast);
-
-            // Apply brightness and contrast adjustments here before creating the BitmapSource.
-            ushort[] adjustedData = ApplyBrightnessAndContrast(harmonizedData, srfData.Brightness, srfData.Contrast, srfData.IsNegative);
-
+            // Изменение размера изображения
+            // Предположим, что DownsamplePixelData возвращает новые данные и обновленные размеры изображения
             int targetWidth = srfData.FrameWidth / 2; // adjust as necessary
             int targetHeight = srfData.FrameHeight / 2; // adjust as necessary
 
-            byte[] pixelData = DownsamplePixelData(adjustedData, srfData.FrameWidth, srfData.FrameHeight, targetWidth, targetHeight);
+            ushort[] downsampledData = DownsamplePixelData(harmonizedData, srfData.FrameWidth, srfData.FrameHeight, targetWidth, targetHeight);           
 
-            string fileName = $"PixelData_{targetWidth}x{targetHeight}.raw";
+            // Обновление данных в srfData
+            srfData.PixelData = downsampledData;
+            srfData.FrameWidth = targetWidth;
+            srfData.FrameHeight = targetHeight;
+
+            return srfData;
+        }
+
+        public Bitmap MakeImage(SrfFileData srfData)
+        {
+            ushort[] contrastBrightData = ApplyBrightnessAndContrast(srfData.PixelData, srfData.Brightness, srfData.Contrast, srfData.IsNegative);
+
+            byte[] pixelData8Bit = Convert16To8Bit(contrastBrightData);
+            byte[] pixel32Data = Convert8BitToBgra32(pixelData8Bit);
+
+            string fileName = $"PixelData_W-{srfData.FrameWidth}xH-{srfData.FrameHeight}.raw";
             try
             {
-                File.WriteAllBytes(fileName, pixelData);
+                byte[] byteArray = new byte[srfData.PixelData.Length * sizeof(ushort)];
+                Buffer.BlockCopy(srfData.PixelData, 0, byteArray, 0, byteArray.Length);
+                File.WriteAllBytes(fileName, byteArray);
                 Console.WriteLine("Pixel data saved successfully.");
             }
             catch (Exception ex)
@@ -62,28 +77,52 @@ namespace XRayApp.CrossUI.Services
                 Console.WriteLine($"An error occurred while saving the pixel data: {ex.Message}");
             }
 
-            /*var format = PixelFormat.Bgra8888; // Adjust the pixel format according to your needs
-            var alphaFormat = AlphaFormat.Premul; // Adjust the alpha format according to your needs
-            var dataPtr = Marshal.AllocHGlobal(pixelData.Length);
-            Marshal.Copy(pixelData, 0, dataPtr, pixelData.Length);
-            var size = new PixelSize(targetWidth, targetHeight);
-            var dpi = new Vector(96, 96); // Adjust DPI values as needed
-
-            var bitmap = new Bitmap(format, alphaFormat, dataPtr, size, dpi, size.Width * 2);*/
-
             var format = PixelFormat.Bgra8888; // Monochrome format (32 bits per pixel)
-            var dataPtr = Marshal.AllocHGlobal(pixelData.Length);
-            Marshal.Copy(pixelData, 0, dataPtr, pixelData.Length);
-            var size = new PixelSize(targetWidth, targetHeight);
-            var dpi = new Vector(96, 96); // Adjust DPI values as needed
+            var alphaFormat = AlphaFormat.Unpremul; // Adjust the alpha format according to your needs
+            var dataPtr = Marshal.AllocHGlobal(pixel32Data.Length);
+            Marshal.Copy(pixel32Data, 0, dataPtr, pixel32Data.Length);
+            var size = new PixelSize(srfData.FrameWidth, srfData.FrameHeight);
+            var dpi = new Vector(96, 96);
 
-            var bitmap = new Bitmap(format, dataPtr, size, dpi, targetWidth * 2);
+            var bitmap = new Bitmap(format, alphaFormat, dataPtr, size, dpi, size.Width * 4); // stride is equal to the width now
 
-            // Free the allocated memory after creating the bitmap
             Marshal.FreeHGlobal(dataPtr);
             return bitmap;
         }
-        public ushort[] HarmonizeImage(ushort[] sourceData, int brightness, int contrast)
+
+        private byte[] Convert8BitToBgra32(byte[] pixelData)
+        {
+            int pixelCount = pixelData.Length;
+            byte[] result = new byte[pixelCount * 4]; // Каждый пиксель будет кодироваться 4 байтами (BGRA)
+
+            for (int i = 0; i < pixelCount; i++)
+            {
+                byte intensity = pixelData[i]; // Значение интенсивности серого
+                result[4 * i] = intensity;     // Blue
+                result[4 * i + 1] = intensity; // Green
+                result[4 * i + 2] = intensity; // Red
+                result[4 * i + 3] = 255;       // Alpha
+            }
+
+            return result;
+        }
+
+
+        private byte[] Convert16To8Bit(ushort[] sourceData)
+        {
+            int length = sourceData.Length;
+            byte[] result = new byte[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = (byte)(sourceData[i] >> 8); // Игнорирование младших 8 битов
+            }
+
+            return result;
+        }
+
+
+        private ushort[] HarmonizeImage(ushort[] sourceData)
         {
             int length = sourceData.Length;
             ushort[] result = new ushort[length];
@@ -160,7 +199,7 @@ namespace XRayApp.CrossUI.Services
         }
 
 
-        public byte[] DownsamplePixelData(ushort[] sourceData, int originalWidth, int originalHeight, int targetWidth, int targetHeight)
+        private ushort[] DownsamplePixelData(ushort[] sourceData, int originalWidth, int originalHeight, int targetWidth, int targetHeight)
         {
             ushort[] downsampledData = new ushort[targetWidth * targetHeight];
 
@@ -178,8 +217,10 @@ namespace XRayApp.CrossUI.Services
                 }
             }
 
+            return downsampledData;
+
             // Преобразуйте данные ushort в байты
-            int length = downsampledData.Length;
+            /*int length = downsampledData.Length;
             byte[] result = new byte[length * 2]; // каждый пиксель кодируется 2 байтами
 
             for (int i = 0; i < length; i++)
@@ -188,10 +229,10 @@ namespace XRayApp.CrossUI.Services
                 result[2 * i + 1] = (byte)((downsampledData[i] >> 8) & 0xFF); // старший байт
             }
 
-            return result;
+            return result;*/
         }
 
-        public ushort[] ApplyBrightnessAndContrast(ushort[] sourceData, int brightness, int contrast, bool negative = false)
+        private ushort[] ApplyBrightnessAndContrast(ushort[] sourceData, int brightness, int contrast, bool negative = false)
         {
             int length = sourceData.Length;
             ushort[] result = new ushort[length];
@@ -202,28 +243,51 @@ namespace XRayApp.CrossUI.Services
             float contrastFactor = (mContrast + medium) / medium;
             float mB = medium + mBrightness;
 
-            Parallel.For(0, length, i =>
+            if (!negative)
             {
-                // Применение коррекции яркости и контраста
-                float oldBrightness = sourceData[i];
-
-                // Применение инверсии, если negative равно true
-                if (negative)
+                Parallel.For(0, length, i =>
                 {
-                    oldBrightness = 16383 - oldBrightness;
-                }
+                    float oldBrightness = sourceData[i];
+                    float newBrightness = ((oldBrightness - medium) * contrastFactor) + mB;
+                    //newBrightness = newBrightness / 64;
 
-                float newBrightness = ((oldBrightness - medium) * contrastFactor) + mB;
+                    if (newBrightness > 16383)
+                    {
+                        newBrightness = 16383;
+                    }
 
-                // Ограничение значения пикселя диапазоном [0, 65535]
-                ushort newValue = (ushort)Math.Max(0, Math.Min(65535, (int)newBrightness));
+                    if (newBrightness < 0)
+                    {
+                        newBrightness = 0;
+                    }
 
-                result[i] = newValue;
-            });
+                    result[i] = (ushort)newBrightness;
+                });
+            }
+            else
+            {
+                Parallel.For(0, length, i =>
+                {
+                    float oldBrightness = sourceData[i];
+                    float newBrightness = (((16383 - oldBrightness) - medium) * contrastFactor) + mB;
+                    //newBrightness = newBrightness / 64;
+
+                    if (newBrightness > 16383)
+                    {
+                        newBrightness = 16383;
+                    }
+
+                    if (newBrightness < 0)
+                    {
+                        newBrightness = 0;
+                    }
+
+                    result[i] = (ushort)newBrightness;
+                });
+            }
 
             return result;
+
         }
-
-
     }
 }
