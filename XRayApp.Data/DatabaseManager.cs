@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using XRayApp.Data.Interfaces;
 using XRayApp.Data.Models;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using XRayApp.Data.Utility;
 
 namespace XRayApp.Data
 {
@@ -22,11 +25,24 @@ namespace XRayApp.Data
         public IStudyRepository StudiesRepository { get; }
         public IImageRepository ImagesRepository { get; }
 
+        private readonly IConfiguration configuration;
+
         public DatabaseManager()
         {
+            configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
             PatientsRepository = new PatientRepository(this);
             StudiesRepository = new StudyRepository(this);
             ImagesRepository = new ImageRepository(this);
+        }
+        ~DatabaseManager()
+        {
+            // Создание дампа базы данных
+            //var utility = new DatabaseUtility();
+            //utility.CreateDatabaseDump("database_dump.sql");
         }
 
         public void InitializeDatabase()
@@ -35,15 +51,15 @@ namespace XRayApp.Data
 
             if (!Patients.Any() && !Studies.Any() && !Images.Any())
             {
-                //Seed();
+                var utility = new DatabaseUtility();
+                utility.RestoreDatabaseFromDump("database_dump.sql");
                 SaveChanges();
             }
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            string connectionString = "Server=localhost;Port=3306;Database=xray_wpf_db;uid=root;Pwd=123456";
-            optionsBuilder.UseMySql(connectionString, new MySqlServerVersion(new Version(5, 5, 26)));
+        {            
+            optionsBuilder.UseMySql(configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(5, 5, 26)));         
         }
 
 
@@ -51,7 +67,7 @@ namespace XRayApp.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Patient>()
-                .HasKey(p => p.Id);
+                .HasKey(p => p.Id);            
 
             modelBuilder.Entity<Study>()
                 .HasKey(s => s.Id);

@@ -115,7 +115,7 @@ namespace XRayApp.CrossUI.Services
 
             for (int i = 0; i < length; i++)
             {
-                result[i] = (byte)(sourceData[i] >> 8); // Игнорирование младших 8 битов
+                result[i] = (byte)(sourceData[i] >> 6); // Игнорирование младших 8 битов
             }
 
             return result;

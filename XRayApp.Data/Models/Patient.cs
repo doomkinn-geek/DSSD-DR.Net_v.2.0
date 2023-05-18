@@ -1,9 +1,12 @@
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace XRayApp.Data.Models
 {
     // Класс модели Patient
+    [Table("patients")]
     public class Patient
     {
         public int Id { get; set; } // Primary Key

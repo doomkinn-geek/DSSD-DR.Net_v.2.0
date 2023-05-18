@@ -1,7 +1,7 @@
 <Window x:Class="XRayApp.CrossUI.ImageWindow"
         xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Image Window" Height="450" Width="800" WindowState="Maximized"
+        Title="Image Window" Height="450" Width="1000" WindowState="Maximized"
 		Background="#222">
 	<Grid Margin="10">
 		<Grid.RowDefinitions>
